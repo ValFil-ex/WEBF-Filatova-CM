@@ -1,6 +1,6 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {ClientsService} from "./clients.service";
-import {Client} from "./client.model";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ClientData} from "./client.model";
+import {ClientsDataService} from "./clients-data.service";
 
 @Component({
   selector: 'app-clients-list',
@@ -26,35 +26,40 @@ import {Client} from "./client.model";
             <th scope="col">Status</th>
           </tr>
           </thead>
-          <tbody>
-          <tr *ngFor="let client of clients" (click)="getSelectedClientID(client.id)">
+          <tbody >
+          <tr  *ngFor="let client of clients" (click)="getSelectedClientID(client.id)">
+<!--          <tr  *ngFor="let client of clients">-->
             <th scope="row">{{client.id}}</th>
             <td>{{client.firstName}}</td>
             <td>{{client.lastName}}</td>
-            <td>{{client.birthDate}}</td>
-            <td>{{client.clientStatus}}</td>
+            <td>{{client.birthdate}}</td>
+            <td>{{client.isActive}}</td>
           </tr>
           </tbody>
         </table>
       </div>
     </div>
+
   `,
   styles: [
   ]
 })
 export class ClientsListComponent implements OnInit {
-  //empty array of objects of client.model type
-  clients: Client[] = [];
+  clients: ClientData[] = [];
+  //emits for clients.comp -> clients-detail.comp
   @Output() selectClientFromList = new EventEmitter<number>();
 
-  constructor(private service: ClientsService) { }
 
+  constructor(private clientsDataService: ClientsDataService) { }
+//private service: ClientsService,
   ngOnInit(): void {
-    //clients array populated with data from clients.service
-    this.clients = this.service.retrieveAll();
+    this.clientsDataService.fetchAllClients().subscribe(fetchedClients =>{
+      this.clients = fetchedClients;
+    });
   }
 
-  getSelectedClientID(id: number) {
+  // change param type to number
+  getSelectedClientID(id: any) {
     //sends id for clients detailed view
     this.selectClientFromList.emit(id);
   }
@@ -62,4 +67,5 @@ export class ClientsListComponent implements OnInit {
   addNewClient() {
     this.selectClientFromList.emit();
   }
+
 }

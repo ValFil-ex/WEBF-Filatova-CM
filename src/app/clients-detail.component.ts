@@ -1,6 +1,7 @@
 import {Component, Input, OnInit, OnChanges, Output, EventEmitter} from '@angular/core';
-import {ClientsService} from "./clients.service";
-import {Client} from "./client.model";
+import {ClientsDataService} from "./clients-data.service";
+import {ClientData} from "./client.model";
+import {AppStatusService} from "./shared/app-status.service";
 
 @Component({
   selector: 'app-clients-detail',
@@ -10,8 +11,6 @@ import {Client} from "./client.model";
         <h3>{{currentClient?'Client details:':'Client has been deleted'}} </h3>
         <hr>
       </div>
-
-
       <div class="row" *ngIf="currentClient">
         <div class="col-md-12">
           <div class="row" >
@@ -26,12 +25,12 @@ import {Client} from "./client.model";
           </div>
           <div class="row">
             <div class="col-md-12">
-              <p>Client's Birth Date: {{currentClient.birthDate}}</p>
+              <p>Client's Birth Date: {{currentClient.birthdate}}</p>
             </div>
           </div>
           <div class="row">
             <div class="col-md-12">
-              <p>Client's Status: {{currentClient.clientStatus}}</p>
+              <p>Client Active: {{currentClient.isActive}}</p>
             </div>
           </div>
           <div class="row">
@@ -40,7 +39,7 @@ import {Client} from "./client.model";
             </div>
           </div>
           <div class="row">
-            <button class="btn btn-primary">Edit</button>
+            <button class="btn btn-primary" (click)="onUpdate()">Edit</button>
             <button class="btn btn-danger" (click)="onDelete()">Delete</button>
           </div>
         </div>
@@ -52,9 +51,11 @@ import {Client} from "./client.model";
 })
 export class ClientsDetailComponent implements OnInit,OnChanges{
   //gets property from Clients comp replace to Client when constructor is empty and http client connected
-  @Input() currentClient: any;
+  @Input() currentClient?: ClientData;
 
-  constructor(private service: ClientsService) { }
+  constructor(private service: ClientsDataService, private appStatusService: AppStatusService) {
+
+  }
 
   ngOnInit(): void {
 
@@ -66,12 +67,23 @@ export class ClientsDetailComponent implements OnInit,OnChanges{
 
   //TODO fix the detailed view toggle - client selection
   onDelete() {
-    this.service.delete(this.currentClient.id);
-    console.log(this.currentClient);
+    if(this.currentClient){
+      this.service.deleteClient(this.currentClient.id).subscribe();
+      console.log(this.currentClient);
+    }else{
+      console.log("no client selected");
+    }
+
+    //TODO maybe delete
     this.refresh();
   }
 
   refresh(){
     this.currentClient = undefined;
+  }
+
+  onUpdate() {
+    //TODO router
+    this.appStatusService.currentStatus.edit = true;
   }
 }

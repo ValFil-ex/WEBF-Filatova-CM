@@ -3,8 +3,9 @@ import {HttpClient} from "@angular/common/http";
 import {ClientData} from "./client.model";
 import {map} from 'rxjs/operators';
 import {Observable} from "rxjs";
+import {ClientsListComponent} from "./clients-list.component";
 
-const CLIENTS_RESOURCE_URL = 'http://localhost:8080/resources/customer';
+const CLIENTS_RESOURCE_URL = 'http://localhost:8080/resources/customer/';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +33,9 @@ export class ClientsDataService {
 //fetch and transform data with observable; Observable for chained methods in case transfrom data is necessary vs Promise
   fetchAllClients(): Observable<ClientData[]>{
    return this.httpClient.get<ClientData[]>(CLIENTS_RESOURCE_URL);
+  }
+
+  updateExistingClient(clientToUpdate: ClientData) {
+    return this.httpClient.put(CLIENTS_RESOURCE_URL + '/' + clientToUpdate.id, clientToUpdate);
   }
 }

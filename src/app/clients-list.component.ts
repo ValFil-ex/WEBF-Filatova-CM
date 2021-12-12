@@ -1,6 +1,7 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {ClientData} from "./client.model";
 import {ClientsDataService} from "./clients-data.service";
+import {AppStatusService} from "./shared/app-status.service";
 
 @Component({
   selector: 'app-clients-list',
@@ -27,7 +28,7 @@ import {ClientsDataService} from "./clients-data.service";
           </tr>
           </thead>
           <tbody >
-          <tr  *ngFor="let client of clients" (click)="getSelectedClientID(client.id)">
+          <tr  *ngFor="let client of clients" (click)="getSelectedClientID(client)">
 <!--          <tr  *ngFor="let client of clients">-->
             <th scope="row">{{client.id}}</th>
             <td>{{client.firstName}}</td>
@@ -44,28 +45,41 @@ import {ClientsDataService} from "./clients-data.service";
   styles: [
   ]
 })
-export class ClientsListComponent implements OnInit {
+export class ClientsListComponent implements OnInit{
   clients: ClientData[] = [];
   //emits for clients.comp -> clients-detail.comp
   @Output() selectClientFromList = new EventEmitter<number>();
+  selectedId?: number;
 
 
-  constructor(private clientsDataService: ClientsDataService) { }
-//private service: ClientsService,
+
+  constructor(private clientsDataService: ClientsDataService) {
+
+  }
+
   ngOnInit(): void {
     this.clientsDataService.fetchAllClients().subscribe(fetchedClients =>{
       this.clients = fetchedClients;
     });
   }
 
-  // change param type to number
-  getSelectedClientID(id: any) {
-    //sends id for clients detailed view
-    this.selectClientFromList.emit(id);
+  getSelectedClientID(client:ClientData) {
+    //sends id for clients.comp->clients-detailed view
+    this.selectedId = client.id
+    this.selectClientFromList.emit(this.selectedId);
   }
 
   addNewClient() {
-    this.selectClientFromList.emit();
+    //triggers display  clients.comp->clients-edit view to add new client
+    this.selectedId = undefined;
+    this.selectClientFromList.emit(this.selectedId);
   }
 
+  refresh(){
+    this.clientsDataService.fetchAllClients().subscribe(fetchedClients =>{
+      this.clients = fetchedClients;
+      console.log(this.clients);
+    });
+    console.log("refreshing and value =" + false);
+  }
 }

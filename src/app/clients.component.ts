@@ -12,22 +12,27 @@ import {AppStatusService} from "./shared/app-status.service";
         <div class="col-md-8">
           <app-clients-list
             (selectClientFromList)="selectedClient($event)">
+            <!--emits selected client for clients-detail-->
+            <!--if ID emitted - clients-detail view initialised-->
+            <!--if no ID emitted (new client) - clients-edit view initialised-->
           </app-clients-list>
         </div>
 
-    <!--    <div class="col-md-4">
+        <div class="col-md-4">
           <app-clients-detail
             *ngIf="displayDetailedView"
-            [currentClient]="clientSelected">
-            &lt;!&ndash;detailed view is displayed if a client was selected on a list&ndash;&gt;
+            [currentClient]="clientSelected"
+            (clientIDToUpdate)="updateClient($event)">
+            <!--detailed view is displayed if a client was selected on a list-->
+            <!--clientIDToUpdate emits selected client for client-edit-->
           </app-clients-detail>
 
           <app-client-edit
-            *ngIf="displayEditForm">
-            &lt;!&ndash;edit/update form is displayed if 1)new client is clicked in list view; 2)Edit is clicked in detailed view&ndash;&gt;
+            *ngIf="displayEditForm"
+            [clientToUpdate] = "clientSelected">
+            <!--edit/update form is displayed if 1)new client is clicked in list view; 2)Edit is clicked in detailed view-->
           </app-client-edit>
-        </div>-->
-        <router-outlet></router-outlet>
+        </div>
 
       </div>
     </div>
@@ -44,7 +49,13 @@ export class ClientsComponent implements OnInit {
   displayDetailedView: boolean = false;
   displayEditForm: boolean = false;
 
-  constructor(private service: ClientsDataService) { }
+  constructor(private service: ClientsDataService, private appStatusService: AppStatusService) {
+    this.appStatusService.viewChanged.subscribe(value=>{
+      if(value){
+        this.clientSelected = undefined;
+      }
+    })
+  }
 
   ngOnInit(): void {
   }
@@ -56,6 +67,7 @@ export class ClientsComponent implements OnInit {
       this.service.fetchClient(id).subscribe(fetchedClient =>{
         this.clientSelected = fetchedClient;
       });
+      //initialises detailed view
       this.displayDetailedView = true;
       this.displayEditForm = false;
     }else {
@@ -66,4 +78,13 @@ export class ClientsComponent implements OnInit {
 
   }
 
+  updateClient(id: number) {
+    //initialises edit view
+    this.displayDetailedView = false;
+    this.displayEditForm = true;
+    this.service.fetchClient(id).subscribe(fetchedClient=>{
+      this.clientSelected = fetchedClient;
+    })
+
+  }
 }

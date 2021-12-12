@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ClientsDataService} from "./clients-data.service";
 import {ClientData} from "./client.model";
 import {AppStatusService} from "./shared/app-status.service";
@@ -11,24 +11,20 @@ import {AppStatusService} from "./shared/app-status.service";
     <form #clientForm="ngForm" (ngSubmit)="onSubmit()" *ngIf="!submitted">
 
       <!--TODO readonly from DB-->
+      <h3>{{clientToUpdate? 'Update Client Information' : 'New Client:'}}</h3>
+      <hr>
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12" *ngIf="clientToUpdate">
           <div class="form-group">
             <label for="id">ID</label>
             <input
               type="number"
               id="id"
               class="form-control"
-              required
-              [(ngModel)]="currentClient.id"
+              readonly
+              [value]="currentClient.id"
               name="id"
-              #id="ngModel"
               placeholder="Please enter an ID (number)">
-            <div
-              [hidden]="id.valid || id.untouched"
-              class="alert alert-danger">
-              ID is required!
-            </div>
           </div>
         </div>
       </div>
@@ -131,25 +127,38 @@ import {AppStatusService} from "./shared/app-status.service";
 })
 export class ClientEditComponent implements OnInit {
   currentClient: ClientData = new ClientData();
+
+  //values to populate Status dropdown selector
   status: boolean[] = [true, false];
+
+  //defines if form shall be displayed or not
   submitted = false;
 
+  //input from client-detail (edit) -> clients.comp to update client
+  @Input() clientToUpdate?: ClientData;
 
 
-  constructor(private service: ClientsDataService, private appStatusService: AppStatusService) { }
-  existingClient: boolean = this.appStatusService.currentStatus.edit;
-  newClient: boolean = this.appStatusService.currentStatus.new;
+
+  constructor(private service: ClientsDataService) {}
 
   ngOnInit(): void {
-
+    //if client to update value captured from clients component, edit form; else new client form
+    if(this.clientToUpdate){
+      this.currentClient = this.clientToUpdate;
+    }
   }
 
   onSubmit(){
     this.submitted = true;
-    this.service.createNewClient(this.currentClient).subscribe();
+    if(this.clientToUpdate){
+      this.service.updateExistingClient(this.currentClient).subscribe();
+    }else{
+      this.service.createNewClient(this.currentClient).subscribe();
+    }
   }
 
   clearForm() {
+    this.submitted = true;
     this.currentClient = new ClientData();
   }
 

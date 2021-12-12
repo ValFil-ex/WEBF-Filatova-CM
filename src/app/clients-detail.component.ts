@@ -6,12 +6,12 @@ import {AppStatusService} from "./shared/app-status.service";
 @Component({
   selector: 'app-clients-detail',
   template: `
-    <div class="row">
+    <div class="row" *ngIf="currentClient">
       <div class="col-md-12">
-        <h3>{{currentClient?'Client details:':'Client has been deleted'}} </h3>
+        <h3>Client details:</h3>
         <hr>
       </div>
-      <div class="row" *ngIf="currentClient">
+      <div class="row">
         <div class="col-md-12">
           <div class="row" >
             <div class="col-md-12">
@@ -39,7 +39,7 @@ import {AppStatusService} from "./shared/app-status.service";
             </div>
           </div>
           <div class="row">
-            <button class="btn btn-primary" (click)="onUpdate()">Edit</button>
+            <button class="btn btn-primary" (click)="onUpdate(currentClient)">Edit</button>
             <button class="btn btn-danger" (click)="onDelete()">Delete</button>
           </div>
         </div>
@@ -49,9 +49,13 @@ import {AppStatusService} from "./shared/app-status.service";
   styles: [
   ]
 })
-export class ClientsDetailComponent implements OnInit,OnChanges{
-  //gets property from Clients comp replace to Client when constructor is empty and http client connected
+export class ClientsDetailComponent implements OnInit{
+  //catches emitted selected client from clients-list->clients.comp to display
   @Input() currentClient?: ClientData;
+
+  //emits selected client for clients.comp->client-edit = to Edit
+  @Output() clientIDToUpdate = new EventEmitter<number>();
+
 
   constructor(private service: ClientsDataService, private appStatusService: AppStatusService) {
 
@@ -61,29 +65,19 @@ export class ClientsDetailComponent implements OnInit,OnChanges{
 
   }
 
-  ngOnChanges(): void{
 
-  }
-
-  //TODO fix the detailed view toggle - client selection
   onDelete() {
     if(this.currentClient){
       this.service.deleteClient(this.currentClient.id).subscribe();
-      console.log(this.currentClient);
-    }else{
-      console.log("no client selected");
     }
-
-    //TODO maybe delete
-    this.refresh();
-  }
-
-  refresh(){
+    //sets property to undefined to stop display
     this.currentClient = undefined;
+
   }
 
-  onUpdate() {
-    //TODO router
-    this.appStatusService.currentStatus.edit = true;
+
+  onUpdate(currentClient: ClientData) {
+    //emits current client to clients->client-edit = to EDIT
+    this.clientIDToUpdate.emit(currentClient.id);
   }
 }

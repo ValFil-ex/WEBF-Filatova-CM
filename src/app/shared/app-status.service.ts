@@ -1,14 +1,16 @@
-import { Injectable } from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
+import {BehaviorSubject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppStatusService {
-  currentStatus = {
-    "new" : false,
-    "edit" : false,
-    "delete": false
-  }
+
+
+  public viewChanged: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+
+
   constructor() { }
+
 
 }

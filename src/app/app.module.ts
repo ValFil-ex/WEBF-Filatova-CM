@@ -8,16 +8,7 @@ import { ClientsListComponent } from './clients-list.component';
 import { ClientsComponent } from './clients.component';
 import {FormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
-import {RouterModule, Routes} from "@angular/router";
 
-const appRoutes: Routes = [
-  {path:'', component: ClientsComponent},
-  {path:'clients', component: ClientsListComponent, children:[
-      {path: ':id', component: ClientsDetailComponent},
-      {path: ':id/edit', component: ClientEditComponent},
-      {path: 'new-client', component: ClientEditComponent}
-    ]},
-];
 
 @NgModule({
   declarations: [
@@ -29,7 +20,6 @@ const appRoutes: Routes = [
   ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(appRoutes),
     FormsModule,
     HttpClientModule,
 

@@ -1,20 +1,24 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
-import {ClientData} from "./client.model";
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild} from '@angular/core';
+import {ClientModel} from "./client.model";
 import {ClientsDataService} from "./clients-data.service";
 import {AppStatusService} from "./shared/app-status.service";
+import {Event} from "@angular/router";
 
 @Component({
   selector: 'app-clients-list',
   template: `
     <div class="row">
       <div class="col-md-12">
-        <button class="btn btn-success" (click)="addNewClient()">New Client</button>
+        <button class="btn btn-success" (click)="onAddNewClient()">New Client</button>
       </div>
     </div>
+
     <hr>
+
     <div class="row">
+
       <div class="col-md-12">
-        <table class="table table-striped table-hover">
+        <table class="table table-hover">
           <thead>
 
           <!--TODO make selected lines change colour: -->
@@ -25,16 +29,20 @@ import {AppStatusService} from "./shared/app-status.service";
             <th scope="col">Last Name</th>
             <th scope="col">Birth Date</th>
             <th scope="col">Status</th>
+            <th colspan="2"scope="col" >Actions</th>
+
           </tr>
           </thead>
-          <tbody >
-          <tr  *ngFor="let client of clients" (click)="getSelectedClientID(client)">
-<!--          <tr  *ngFor="let client of clients">-->
+          <tbody>
+          <tr *ngFor="let client of clients">
+            <!--          <tr  *ngFor="let client of clients">-->
             <th scope="row">{{client.id}}</th>
             <td>{{client.firstName}}</td>
             <td>{{client.lastName}}</td>
             <td>{{client.birthdate}}</td>
             <td>{{client.isActive}}</td>
+            <td><button class="btn btn-primary" (click)="onEdit(client)" >Edit</button></td>
+            <td><button class="btn btn-danger" (click)="onDelete(client)" >Delete</button></td>
           </tr>
           </tbody>
         </table>
@@ -46,40 +54,31 @@ import {AppStatusService} from "./shared/app-status.service";
   ]
 })
 export class ClientsListComponent implements OnInit{
-  clients: ClientData[] = [];
-  //emits for clients.comp -> clients-detail.comp
-  @Output() selectClientFromList = new EventEmitter<number>();
-  selectedId?: number;
+  clients: ClientModel[] = [];
+  @Output() selectedClient = new EventEmitter<number>();
 
-
-
-  constructor(private clientsDataService: ClientsDataService) {
-
-  }
+  constructor(private clientsDataService: ClientsDataService) {}
 
   ngOnInit(): void {
-    this.clientsDataService.fetchAllClients().subscribe(fetchedClients =>{
-      this.clients = fetchedClients;
-    });
+    this.reload();
   }
 
-  getSelectedClientID(client:ClientData) {
-    //sends id for clients.comp->clients-detailed view
-    this.selectedId = client.id
-    this.selectClientFromList.emit(this.selectedId);
+  onEdit(client:ClientModel){
+    this.selectedClient.emit(client.id);
   }
 
-  addNewClient() {
-    //triggers display  clients.comp->clients-edit view to add new client
-    this.selectedId = undefined;
-    this.selectClientFromList.emit(this.selectedId);
+  onDelete(client: ClientModel){
+    if(confirm("Delete this client?")){
+      this.clientsDataService.deleteClient(client.id!).then(()=>this.reload);
+    }
   }
 
-  refresh(){
-    this.clientsDataService.fetchAllClients().subscribe(fetchedClients =>{
-      this.clients = fetchedClients;
-      console.log(this.clients);
-    });
-    console.log("refreshing and value =" + false);
+  onAddNewClient() {
+    this.selectedClient.emit();
+  }
+
+
+  reload() {
+    this.clientsDataService.fetchAllClients().then(clients=>this.clients = clients);
   }
 }

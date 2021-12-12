@@ -1,4 +1,4 @@
-export class ClientData {
+export class ClientModel {
   public birthdate = '';
   public firstName = '';
   public id?: number;

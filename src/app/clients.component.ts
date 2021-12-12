@@ -1,40 +1,37 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {ClientData} from "./client.model";
+import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {ClientModel} from "./client.model";
 import {ClientsDataService} from "./clients-data.service";
-import {AppStatusService} from "./shared/app-status.service";
+import {ClientsListComponent} from "./clients-list.component";
+
 
 @Component({
   selector: 'app-clients',
   template: `
+
     <div class="container-fluid">
+
       <div class="row">
-        <!--always displayed-->
+
         <div class="col-md-8">
           <app-clients-list
-            (selectClientFromList)="selectedClient($event)">
-            <!--emits selected client for clients-detail-->
-            <!--if ID emitted - clients-detail view initialised-->
-            <!--if no ID emitted (new client) - clients-edit view initialised-->
+            (selectedClient)="onSelect($event)"
+            #clients
+          >
           </app-clients-list>
         </div>
 
         <div class="col-md-4">
-          <app-clients-detail
-            *ngIf="displayDetailedView"
-            [currentClient]="clientSelected"
-            (clientIDToUpdate)="updateClient($event)">
-            <!--detailed view is displayed if a client was selected on a list-->
-            <!--clientIDToUpdate emits selected client for client-edit-->
-          </app-clients-detail>
-
           <app-client-edit
-            *ngIf="displayEditForm"
-            [clientToUpdate] = "clientSelected">
-            <!--edit/update form is displayed if 1)new client is clicked in list view; 2)Edit is clicked in detailed view-->
+            *ngIf="clientSelected"
+            [currentClient]="clientSelected"
+            (ok)="unselectClient(true)"
+            (cancel)="unselectClient(false)"
+          >
           </app-client-edit>
         </div>
 
       </div>
+
     </div>
 
 
@@ -42,49 +39,37 @@ import {AppStatusService} from "./shared/app-status.service";
   styles: [
   ]
 })
+
+
 export class ClientsComponent implements OnInit {
-  clientSelected?: ClientData;
+  clientSelected?: ClientModel;
+  @ViewChild('clients') clients!: ClientsListComponent; //value assigned at runtime
 
-  //TODO replace with router?
-  displayDetailedView: boolean = false;
-  displayEditForm: boolean = false;
 
-  constructor(private service: ClientsDataService, private appStatusService: AppStatusService) {
-    this.appStatusService.viewChanged.subscribe(value=>{
-      if(value){
-        this.clientSelected = undefined;
-      }
-    })
+  constructor(private clientsDataService: ClientsDataService) {
   }
 
   ngOnInit(): void {
   }
 
 
-  selectedClient(id: number) {
+  onSelect(id: number) {
     if(id){
-      //getting selected client data from service for detailed client view
-      this.service.fetchClient(id).subscribe(fetchedClient =>{
-        this.clientSelected = fetchedClient;
+      //edit existing client
+      this.clientsDataService.fetchClient(id).then(client=>{
+        this.clientSelected = client;
       });
-      //initialises detailed view
-      this.displayDetailedView = true;
-      this.displayEditForm = false;
-    }else {
-      //initialises edit view
-      this.displayDetailedView = false;
-      this.displayEditForm = true;
+    }else{
+      //add new client
+      this.clientSelected = new ClientModel();
     }
-
   }
 
-  updateClient(id: number) {
-    //initialises edit view
-    this.displayDetailedView = false;
-    this.displayEditForm = true;
-    this.service.fetchClient(id).subscribe(fetchedClient=>{
-      this.clientSelected = fetchedClient;
-    })
 
+  unselectClient(refresh: boolean) {
+    this.clientSelected = undefined;
+    if(refresh){
+      this.clients.reload();
+    }
   }
 }

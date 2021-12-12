@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {ClientData} from "./client.model";
+import {ClientModel} from "./client.model";
 import {map} from 'rxjs/operators';
 import {Observable} from "rxjs";
 import {ClientsListComponent} from "./clients-list.component";
@@ -11,31 +11,32 @@ const CLIENTS_RESOURCE_URL = 'http://localhost:8080/resources/customer/';
   providedIn: 'root'
 })
 export class ClientsDataService {
-  listOfClients: ClientData[] = [];
+  listOfClients: ClientModel[] = [];
 
 
 
   constructor(private httpClient: HttpClient) { }
 
-  deleteClient(id: number | undefined): any{
-    return this.httpClient.delete(CLIENTS_RESOURCE_URL + '/' + id);
+  deleteClient(id: number): Promise<any>{
+    return this.httpClient.delete(CLIENTS_RESOURCE_URL + '/' + id).toPromise();
   }
 
-//TODO fix it
-  createNewClient(client: ClientData): any{
- return this.httpClient.post<ClientData>(CLIENTS_RESOURCE_URL, client);
+
+  createNewClient(client: ClientModel): Promise<any>{
+ return this.httpClient.post(CLIENTS_RESOURCE_URL, client).toPromise();
   }
 
-  fetchClient(id: number): Observable<ClientData>{
-    return this.httpClient.get<ClientData>(CLIENTS_RESOURCE_URL + '/' + id);
+  fetchClient(id: number): Promise<ClientModel | undefined>{
+    return this.httpClient.get<ClientModel>(CLIENTS_RESOURCE_URL + '/' + id).toPromise();
   }
 
 //fetch and transform data with observable; Observable for chained methods in case transfrom data is necessary vs Promise
-  fetchAllClients(): Observable<ClientData[]>{
-   return this.httpClient.get<ClientData[]>(CLIENTS_RESOURCE_URL);
+  fetchAllClients(): Promise<ClientModel[]>{
+   // @ts-ignore
+    return this.httpClient.get<ClientModel[]>(CLIENTS_RESOURCE_URL).toPromise();
   }
 
-  updateExistingClient(clientToUpdate: ClientData) {
-    return this.httpClient.put(CLIENTS_RESOURCE_URL + '/' + clientToUpdate.id, clientToUpdate);
+  updateExistingClient(clientToUpdate: ClientModel): Promise<any>{
+    return this.httpClient.put(CLIENTS_RESOURCE_URL + '/' + clientToUpdate.id, clientToUpdate).toPromise();
   }
 }

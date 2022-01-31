@@ -7,6 +7,8 @@ import { ClientsListComponent } from './clients-list.component';
 import {FormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {ClientsComponent} from "./clients.component";
+import { FilterPipe } from './pipes/filter.pipe';
+
 
 
 @NgModule({
@@ -14,7 +16,8 @@ import {ClientsComponent} from "./clients.component";
     AppComponent,
     ClientsComponent,
     ClientEditComponent,
-    ClientsListComponent
+    ClientsListComponent,
+    FilterPipe,
 
   ],
   imports: [

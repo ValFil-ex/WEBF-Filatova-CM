@@ -69,7 +69,7 @@ export class ClientsComponent implements OnInit {
   unselectClient(refresh: boolean) {
     this.clientSelected = undefined;
     if(refresh){
-      this.clients.reload();
+      this.clients.refresh();
     }
   }
 }

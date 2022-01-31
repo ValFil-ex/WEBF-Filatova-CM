@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {ClientModel} from "./client.model";
-import {map} from 'rxjs/operators';
-import {Observable} from "rxjs";
-import {ClientsListComponent} from "./clients-list.component";
 
 const CLIENTS_RESOURCE_URL = 'http://localhost:8080/resources/customer/';
 

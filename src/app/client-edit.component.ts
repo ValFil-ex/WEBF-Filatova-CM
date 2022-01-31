@@ -1,20 +1,21 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ClientsDataService} from "./clients-data.service";
 import {ClientModel} from "./client.model";
-import {AppStatusService} from "./shared/app-status.service";
-
 
 
 @Component({
   selector: 'app-client-edit',
   template: `
+
+    <div class="container">
+
     <form #clientForm="ngForm" (ngSubmit)="onSubmit()" *ngIf="!submitted">
 
       <!--TODO readonly from DB-->
-      <h3>{{currentClient ? 'Update Client Information' : 'New Client:'}}</h3>
+      <h3>{{currentClient ? 'Update Client Information:' : 'New Client:'}}</h3>
       <hr>
       <div class="row">
-        <div class="col-md-12" *ngIf="currentClient">
+        <div class="col-md-12" *ngIf="currentClient.id">
           <div class="form-group">
             <label for="id">ID</label>
             <input
@@ -83,7 +84,7 @@ import {AppStatusService} from "./shared/app-status.service";
               [(ngModel)]="currentClient.birthdate"
               name="birthDate"
               #birthDate="ngModel"
-              placeholder="Please enter the client's birth date">
+              placeholder="YYYY-MM-DD">
           </div>
         </div>
       </div>
@@ -99,7 +100,7 @@ import {AppStatusService} from "./shared/app-status.service";
               [(ngModel)]="currentClient.isActive"
               name="clientStatus"
               #clientStatus="ngModel">
-              <option *ngFor="let s of status" [value]=s required>{{s}}</option>
+              <option *ngFor="let s of status" [value]=s >{{s?'Active':'Inactive'}}</option>
             </select>
             <div
               [hidden]="clientStatus.valid || clientStatus.untouched"
@@ -121,9 +122,10 @@ import {AppStatusService} from "./shared/app-status.service";
         </div>
       </div>
     </form>
+
+    </div>
   `,
-  styles: [
-  ]
+  styleUrls: [`./shared/styles.css`]
 })
 export class ClientEditComponent implements OnInit {
 

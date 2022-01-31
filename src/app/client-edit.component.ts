@@ -9,119 +9,119 @@ import {ClientModel} from "./client.model";
 
     <div class="container">
 
-    <form #clientForm="ngForm" (ngSubmit)="onSubmit()" *ngIf="!submitted">
+      <form #clientForm="ngForm" (ngSubmit)="onSubmit()" *ngIf="!submitted">
 
-      <!--TODO readonly from DB-->
-      <h3>{{currentClient ? 'Update Client Information:' : 'New Client:'}}</h3>
-      <hr>
-      <div class="row">
-        <div class="col-md-12" *ngIf="currentClient.id">
-          <div class="form-group">
-            <label for="id">ID</label>
-            <input
-              type="number"
-              id="id"
-              class="form-control"
-              readonly
-              [value]="currentClient.id"
-              name="id"
-              placeholder="Please enter an ID (number)">
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="firstName">First Name</label>
-            <input
-              type="text"
-              id="firstName"
-              class="form-control"
-              required
-              [(ngModel)]="currentClient.firstName"
-              name="firstName"
-              #firstName="ngModel"
-              placeholder="Please enter the client's name">
-            <div
-              [hidden]="firstName.valid || firstName.untouched"
-              class="alert alert-danger">
-              Name is required!
+        <!--TODO readonly from DB-->
+        <h3>{{currentClient ? 'Update Client Information:' : 'New Client:'}}</h3>
+        <hr>
+        <div class="row">
+          <div class="col-md-12" *ngIf="currentClient.id">
+            <div class="form-group">
+              <label for="id">ID</label>
+              <input
+                type="number"
+                id="id"
+                class="form-control"
+                readonly
+                [value]="currentClient.id"
+                name="id"
+                placeholder="Please enter an ID (number)">
             </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input
-              type="text"
-              id="lastName"
-              class="form-control"
-              required
-              [(ngModel)]="currentClient.lastName"
-              name="lastName"
-              #lastName="ngModel"
-              placeholder="Please enter the client's last name">
-            <div
-              [hidden]="lastName.valid || lastName.untouched"
-              class="alert alert-danger">
-              Last name is required!
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input
+                type="text"
+                id="firstName"
+                class="form-control"
+                required
+                [(ngModel)]="currentClient.firstName"
+                name="firstName"
+                #firstName="ngModel"
+                placeholder="Please enter the client's name">
+              <div
+                [hidden]="firstName.valid || firstName.untouched"
+                class="alert alert-danger">
+                Name is required!
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <!--TODO restrict input to yyyy-mm-dd-->
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="birthDate">Birth Date</label>
-            <input
-              type="text"
-              id="birthDate"
-              class="form-control"
-              [(ngModel)]="currentClient.birthdate"
-              name="birthDate"
-              #birthDate="ngModel"
-              placeholder="YYYY-MM-DD">
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="clientStatus">Status</label>
-            <select
-              id="clientStatus"
-              class="form-control"
-              required
-              [(ngModel)]="currentClient.isActive"
-              name="clientStatus"
-              #clientStatus="ngModel">
-              <option *ngFor="let s of status" [value]=s >{{s?'Active':'Inactive'}}</option>
-            </select>
-            <div
-              [hidden]="clientStatus.valid || clientStatus.untouched"
-              class="alert alert-danger">
-              Status is required!
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input
+                type="text"
+                id="lastName"
+                class="form-control"
+                required
+                [(ngModel)]="currentClient.lastName"
+                name="lastName"
+                #lastName="ngModel"
+                placeholder="Please enter the client's last name">
+              <div
+                [hidden]="lastName.valid || lastName.untouched"
+                class="alert alert-danger">
+                Last name is required!
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          <button
-            type="submit"
-            class="btn btn-success"
-            [disabled]="!clientForm.form.valid">Save
-          </button>
-          <button type="button" class="btn btn-danger" (click)="onCancel(); clientForm.reset()">Cancel</button>
+        <!--TODO restrict input to yyyy-mm-dd-->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="birthDate">Birth Date</label>
+              <input
+                type="text"
+                id="birthDate"
+                class="form-control"
+                [(ngModel)]="currentClient.birthDate"
+                name="birthDate"
+                #birthDate="ngModel"
+                placeholder="YYYY-MM-DD">
+            </div>
+          </div>
         </div>
-      </div>
-    </form>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="clientStatus">Status</label>
+              <select
+                id="clientStatus"
+                class="form-control"
+                required
+                [(ngModel)]="currentClient.isActive"
+                name="clientStatus"
+                #clientStatus="ngModel">
+                <option *ngFor="let s of status" [value]=s>{{s ? 'Active' : 'Inactive'}}</option>
+              </select>
+              <div
+                [hidden]="clientStatus.valid || clientStatus.untouched"
+                class="alert alert-danger">
+                Status is required!
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <button
+              type="submit"
+              class="btn btn-success"
+              [disabled]="!clientForm.form.valid">Save
+            </button>
+            <button type="button" class="btn btn-danger" (click)="onCancel(); clientForm.reset()">Cancel</button>
+          </div>
+        </div>
+      </form>
 
     </div>
   `,

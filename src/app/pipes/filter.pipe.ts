@@ -18,9 +18,9 @@ export class FilterPipe implements PipeTransform {
 
 
     return items.filter(item => {
-      return (JSON.stringify(item.firstName).toLowerCase().includes(filter.firstName)
-        && JSON.stringify(item.lastName).toLowerCase().includes(filter.lastName)
-        && JSON.stringify(item.birthdate).toLowerCase().includes(filter.birthdate)
+      return (JSON.stringify(item.firstName).toLowerCase().includes(filter.firstName.toLocaleLowerCase())
+        && JSON.stringify(item.lastName).toLowerCase().includes(filter.lastName.toLocaleLowerCase())
+        && JSON.stringify(item.birthDate).toLowerCase().includes(filter.birthDate)
         && JSON.stringify(item.isActive).toLowerCase().includes(filter.isActive));
     });
 

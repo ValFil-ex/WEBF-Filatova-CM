@@ -1,5 +1,5 @@
 export class ClientModel {
-  public birthdate = '';
+  public birthDate = '';
   public firstName = '';
   public id?: number;
   public isActive?: boolean;

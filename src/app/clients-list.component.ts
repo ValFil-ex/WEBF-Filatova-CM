@@ -82,12 +82,12 @@ import {ClientsDataService} from "./clients-data.service";
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let client of clients | clientsFilter:  {firstName:searchName, lastName:searchLastName, birthdate:searchDate, isActive:searchStatus}">
+            <tr *ngFor="let client of clients | clientsFilter:  {firstName:searchName, lastName:searchLastName, birthDate:searchDate, isActive:searchStatus}">
               <!--          <tr  *ngFor="let client of clients">-->
               <th scope="row">{{client.id}}</th>
               <td>{{client.firstName}}</td>
               <td>{{client.lastName}}</td>
-              <td>{{client.birthdate}}</td>
+              <td>{{client.birthDate}}</td>
               <td>{{client.isActive?'Active':'Inactive'}}</td>
               <td><button class="btn btn-primary" (click)="onEdit(client)" >Edit</button></td>
               <td><button class="btn btn-danger" (click)="onDelete(client)" >Delete</button></td>
@@ -133,7 +133,8 @@ export class ClientsListComponent implements OnInit{
 
 
   refresh() {
-    this.clientsDataService.fetchAllClients().then(clients=>this.clients = clients);
+    this.clientsDataService.fetchAllClients().then((clients) =>{this.clients = clients});
+    // this.clients = clients
     this.clearSearchFields();
   }
 

@@ -2,15 +2,13 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {ClientModel} from "./client.model";
 
-const CLIENTS_RESOURCE_URL = 'http://localhost:8080/resources/customer/';
+const CLIENTS_RESOURCE_URL = 'http://springbootmysqlcrudaws-env.eba-wjeenpa2.eu-central-1.elasticbeanstalk.com/api/users';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClientsDataService {
   listOfClients: ClientModel[] = [];
-
-
 
   constructor(private httpClient: HttpClient) { }
 
